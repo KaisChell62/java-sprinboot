@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}">
+    <title>Accueil - Gestion des Étudiants</title>
+</head>
+<body>
+    <div th:replace="~{layout :: header}"></div>
+
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">Système de Gestion des Étudiants</h1>
+        
+        <div class="row">
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Gestion des Étudiants</h5>
+                        <p class="card-text">Gérer la liste des étudiants, ajouter, modifier ou supprimer des étudiants.</p>
+                        <a href="/web/students" class="btn btn-primary">Accéder</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Gestion des Cours</h5>
+                        <p class="card-text">Gérer la liste des cours, ajouter, modifier ou supprimer des cours.</p>
+                        <a href="/web/courses" class="btn btn-primary">Accéder</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Gestion des Notes</h5>
+                        <p class="card-text">Gérer les notes des étudiants, ajouter, modifier ou supprimer des notes.</p>
+                        <a href="/web/grades" class="btn btn-primary">Accéder</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Rapports</h5>
+                        <p class="card-text">Consulter les rapports et statistiques sur les notes et les performances.</p>
+                        <a href="/web/reports" class="btn btn-primary">Accéder</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{layout :: scripts}"></div>
+</body>
+</html> 

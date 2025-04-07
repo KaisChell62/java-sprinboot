@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}">
+    <title>Rapports</title>
+</head>
+<body>
+    <div th:replace="~{layout :: header}"></div>
+
+    <div class="container mt-4">
+        <h2>Génération de Rapports</h2>
+        
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Rapport par Cours</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Sélectionnez un cours pour générer un rapport des notes moyennes.</p>
+                        <form id="courseReportForm" th:action="@{/web/reports/view-course}" method="get">
+                            <div class="form-group mb-3">
+                                <label for="courseId">Cours</label>
+                                <select class="form-control" id="courseId" name="courseId" required>
+                                    <option value="">Sélectionnez un cours</option>
+                                    <option th:each="course : ${courses}"
+                                            th:value="${course.id}"
+                                            th:text="${course.nom}">
+                                    </option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Générer le rapport</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Rapport par Étudiant</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Sélectionnez un étudiant pour générer un rapport des notes moyennes.</p>
+                        <form id="studentReportForm" th:action="@{/web/reports/view-student}" method="get">
+                            <div class="form-group mb-3">
+                                <label for="studentId">Étudiant</label>
+                                <select class="form-control" id="studentId" name="studentId" required>
+                                    <option value="">Sélectionnez un étudiant</option>
+                                    <option th:each="student : ${students}"
+                                            th:value="${student.id}"
+                                            th:text="${student.prenom + ' ' + student.nom}">
+                                    </option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Générer le rapport</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{layout :: scripts}"></div>
+</body>
+</html> 

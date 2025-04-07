@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}">
+    <title>Gestion des Étudiants</title>
+</head>
+<body>
+    <div th:replace="~{layout :: header}"></div>
+
+    <div class="container mt-4">
+        <h2>Gestion des Étudiants</h2>
+
+        <!-- Formulaire d'ajout d'étudiant -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Ajouter un étudiant</h5>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/web/students}" method="post" th:object="${newStudent}">
+                    <div class="form-group mb-3">
+                        <label for="nom">Nom</label>
+                        <input type="text" class="form-control" id="nom" th:field="*{nom}" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="prenom">Prénom</label>
+                        <input type="text" class="form-control" id="prenom" th:field="*{prenom}" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Ajouter l'étudiant</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Liste des étudiants -->
+        <div class="card">
+            <div class="card-header">
+                <h5>Liste des étudiants</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Email</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="student : ${students}">
+                            <td th:text="${student.id}"></td>
+                            <td th:text="${student.nom}"></td>
+                            <td th:text="${student.prenom}"></td>
+                            <td th:text="${student.email}"></td>
+                            <td>
+                                <a th:href="@{/web/grades/student/{id}(id=${student.id})}" class="btn btn-info">Voir les notes</a>
+                                <a th:href="@{/web/students/edit/{id}(id=${student.id})}" class="btn btn-warning">Modifier</a>
+                                <a th:href="@{/web/students(removeId=${student.id})}" class="btn btn-danger" 
+                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet étudiant?')">Supprimer</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour modification -->
+    <div class="modal fade" id="editStudentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modifier l'étudiant</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editStudentForm" method="post">
+                        <input type="hidden" id="editId">
+                        <div class="form-group mb-3">
+                            <label for="editNom">Nom</label>
+                            <input type="text" class="form-control" id="editNom" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="editPrenom">Prénom</label>
+                            <input type="text" class="form-control" id="editPrenom" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="editEmail">Email</label>
+                            <input type="email" class="form-control" id="editEmail" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary" onclick="updateStudent()">Enregistrer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${successMessage}" class="alert alert-success" role="alert">
+        <span th:text="${successMessage}"></span>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+        <span th:text="${errorMessage}"></span>
+    </div>
+
+    <div th:replace="~{layout :: scripts}"></div>
+    
+    <script th:inline="javascript">
+    function editStudent(id) {
+        fetch(`/web/students/${id}`)
+            .then(response => response.json())
+            .then(student => {
+                document.getElementById('editId').value = student.id;
+                document.getElementById('editNom').value = student.nom;
+                document.getElementById('editPrenom').value = student.prenom;
+                document.getElementById('editEmail').value = student.email;
+                new bootstrap.Modal(document.getElementById('editStudentModal')).show();
+            });
+    }
+
+    function updateStudent() {
+        const id = document.getElementById('editId').value;
+        const student = {
+            id: id,
+            nom: document.getElementById('editNom').value,
+            prenom: document.getElementById('editPrenom').value,
+            email: document.getElementById('editEmail').value
+        };
+
+        fetch(`/web/students/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(student)
+        }).then(() => window.location.reload());
+    }
+
+    // La fonction deleteStudent n'est plus nécessaire car nous utilisons des liens directs avec confirmation
+    // Nous la gardons commentée au cas où nous voudrions revenir à l'AJAX plus tard
+    /*
+    function deleteStudent(id) {
+        if (confirm('Êtes-vous sûr de vouloir supprimer cet étudiant?')) {
+            fetch('/web/students/' + id, {
+                method: 'DELETE'
+            }).then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Erreur lors de la suppression');
+                }
+            });
+        }
+    }
+    */
+    </script>
+</body>
+</html> 

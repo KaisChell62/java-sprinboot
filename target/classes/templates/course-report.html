@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}">
+    <title>Rapport de Cours</title>
+</head>
+<body>
+    <div th:replace="~{layout :: header}"></div>
+
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Rapport du Cours: <span th:text="${course.nom}"></span></h2>
+            <a th:href="@{/web/reports}" class="btn btn-secondary">Retour aux rapports</a>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5>Informations générales</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Nom du cours:</strong> <span th:text="${course.nom}"></span></p>
+                        <p><strong>Code:</strong> <span th:text="${course.code}"></span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Moyenne générale:</strong> <span th:text="${average != null ? #numbers.formatDecimal(average, 1, 2) + '/20' : 'N/A'}"></span></p>
+                        <p><strong>Nombre de notes:</strong> <span th:text="${grades.size()}"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5>Liste des notes</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Étudiant</th>
+                            <th>Note</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="grade : ${grades}">
+                            <td th:text="${grade.student.prenom + ' ' + grade.student.nom}"></td>
+                            <td th:text="${grade.note + '/20'}"></td>
+                        </tr>
+                        <tr th:if="${grades.isEmpty()}">
+                            <td colspan="2" class="text-center">Aucune note enregistrée pour ce cours</td>
+                        </tr>
+                    </tbody>
+                    <tfoot th:if="${!grades.isEmpty()}">
+                        <tr class="table-info">
+                            <td><strong>Moyenne</strong></td>
+                            <td><strong th:text="${average != null ? #numbers.formatDecimal(average, 1, 2) + '/20' : 'N/A'}"></strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{layout :: scripts}"></div>
+</body>
+</html> 

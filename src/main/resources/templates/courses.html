@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+    <div th:replace="~{layout :: nav}"></div>
+    
+    <div class="container">
+        <h2>Gestion des Cours</h2>
+        
+        <!-- Formulaire d'ajout -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Ajouter un cours</h5>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/web/courses}" method="post" th:object="${newCourse}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Nom du cours</label>
+                                <input type="text" class="form-control" th:field="*{nom}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Code du cours</label>
+                                <input type="text" class="form-control" th:field="*{code}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Ajouter</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Liste des cours -->
+        <div class="card">
+            <div class="card-header">
+                <h5>Liste des cours</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Code</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="course : ${courses}">
+                            <td th:text="${course.id}"></td>
+                            <td th:text="${course.nom}"></td>
+                            <td th:text="${course.code}"></td>
+                            <td>
+                                <a th:href="@{/web/grades/course/{id}(id=${course.id})}" class="btn btn-info btn-sm">Voir les notes</a>
+                                <a th:href="@{/web/courses/{id}/edit(id=${course.id})}" class="btn btn-warning btn-sm">Modifier</a>
+                                <a th:href="@{/web/courses/{id}/delete(id=${course.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce cours ?')">Supprimer</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{layout :: scripts}"></div>
+</body>
+</html> 

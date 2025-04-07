@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}">
+    <title>Notes de l'étudiant</title>
+</head>
+<body>
+    <div th:replace="~{layout :: header}"></div>
+
+    <div class="container mt-4">
+        <div class="row mb-4">
+            <div class="col">
+                <h2>Notes de <span th:text="${student.prenom + ' ' + student.nom}"></span></h2>
+                <p class="text-muted" th:text="${'Email: ' + student.email}"></p>
+            </div>
+        </div>
+
+        <!-- Formulaire d'ajout de note -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Ajouter une note</h5>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/web/grades}" method="post">
+                    <input type="hidden" name="student.id" th:value="${student.id}">
+                    <div class="form-group mb-3">
+                        <label for="course">Cours</label>
+                        <select class="form-control" id="course" name="course.id" required>
+                            <option value="">Sélectionnez un cours</option>
+                            <option th:each="course : ${courses}"
+                                    th:value="${course.id}"
+                                    th:text="${course.nom}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="note">Note</label>
+                        <input type="number" class="form-control" id="note" name="note"
+                               min="0" max="20" step="0.5" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Ajouter la note</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Liste des notes -->
+        <div class="card">
+            <div class="card-header">
+                <h5>Notes actuelles</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Cours</th>
+                            <th>Note</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="grade : ${grades}">
+                            <td th:text="${grade.course.nom}"></td>
+                            <td th:text="${grade.note}"></td>
+                            <td>
+                                <button class="btn btn-warning btn-sm" th:onclick="'editGrade(' + ${grade.id} + ')'">Modifier</button>
+                                <button class="btn btn-danger btn-sm" th:onclick="'deleteGrade(' + ${grade.id} + ')'">Supprimer</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-info">
+                            <td><strong>Moyenne générale</strong></td>
+                            <td colspan="2"><strong th:text="${average != null ? #numbers.formatDecimal(average, 1, 2) : 'N/A'}"></strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour modification -->
+    <div class="modal fade" id="editGradeModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modifier la note</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editGradeForm">
+                        <input type="hidden" id="editGradeId">
+                        <div class="form-group mb-3">
+                            <label for="editNote">Note</label>
+                            <input type="number" class="form-control" id="editNote"
+                                   min="0" max="20" step="0.5" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary" onclick="updateGrade()">Enregistrer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{layout :: scripts}"></div>
+
+    <script th:inline="javascript">
+    function editGrade(id) {
+        fetch(`/web/grades/${id}`)
+            .then(response => response.json())
+            .then(grade => {
+                document.getElementById('editGradeId').value = grade.id;
+                document.getElementById('editNote').value = grade.note;
+                new bootstrap.Modal(document.getElementById('editGradeModal')).show();
+            });
+    }
+
+    function updateGrade() {
+        const id = document.getElementById('editGradeId').value;
+        const note = document.getElementById('editNote').value;
+
+        fetch(`/web/grades/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: id,
+                note: note
+            })
+        }).then(() => window.location.reload());
+    }
+
+    function deleteGrade(id) {
+        if (confirm('Êtes-vous sûr de vouloir supprimer cette note ?')) {
+            fetch(`/web/grades/${id}`, {
+                method: 'DELETE'
+            }).then(() => window.location.reload());
+        }
+    }
+    </script>
+</body>
+</html> 
