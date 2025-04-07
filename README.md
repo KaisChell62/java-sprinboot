@@ -83,7 +83,7 @@ spring.jpa.hibernate.ddl-auto=update
 ./mvnw spring-boot:run
 ```
 
-L’API sera disponible à l’adresse : `http://localhost:8080`
+L’API sera disponible à l’adresse : `http://localhost:8081`
 
 ---
 
